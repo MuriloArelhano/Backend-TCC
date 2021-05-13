@@ -1,8 +1,8 @@
-import Sequelize from 'sequelize';
+const Sequelize = require('sequelize');
 // database config
-import databaseConfig from '../config/database';
+const databaseConfig = require('../config/database');
 // models
-import User from '../app/models/User';
+const User = require('../app/models/User');
 
 const models = [User];
 
@@ -22,4 +22,4 @@ class Database {
   }
 }
 
-export default new Database();
+module.exports = new Database();
