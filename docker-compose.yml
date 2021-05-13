@@ -1,0 +1,14 @@
+version: "3"
+services:
+  devrel_database:
+    image: postgres
+    container_name: "devrel_database"
+    environment:
+      - POSTGRES_DB=db_devrel
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=GMT
+    volumes:
+      - "./data/postgres:/var/lib/postgresql/data"
+    ports:
+      - 5432:5432
