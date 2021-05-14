@@ -62,9 +62,10 @@ class UserController {
       });
     }
 
-    if (user.status === 'REMOVIDO') {
+    if (user.status === 'REMOVIDO' || user.status === 'SUSPENSO') {
       return response.status(400).json({
-        error: 'Seu perfil foi removido. Contacte o administrador',
+        error:
+          'Seu perfil está suspenso ou foi removido. Contacte o administrador',
       });
     }
 

@@ -10,7 +10,7 @@ class User extends Model {
         email: Sequelize.STRING,
         password: Sequelize.STRING,
         birth_date: Sequelize.DATEONLY,
-        status: Sequelize.ENUM('PENDENTE', 'ATIVO', 'REMOVIDO'),
+        status: Sequelize.ENUM('SUSPENSO', 'PENDENTE', 'ATIVO', 'REMOVIDO'),
         role: Sequelize.ENUM('ADMIN', 'BASE'),
       },
       {
