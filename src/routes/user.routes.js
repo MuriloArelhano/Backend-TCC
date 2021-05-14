@@ -8,5 +8,6 @@ userRouter.get('/', (request, response) => {
 });
 
 userRouter.post('/', UserController.create);
+userRouter.post('/auth', UserController.auth);
 
 module.exports = userRouter;
