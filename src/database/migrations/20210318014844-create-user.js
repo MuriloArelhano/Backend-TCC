@@ -22,7 +22,7 @@ module.exports = {
       },
       birth_date: {
         type: Sequelize.DATEONLY,
-        allowNull: false,
+        allowNull: true,
       },
       status: {
         type: Sequelize.ENUM('SUSPENSO', 'PENDENTE', 'ATIVO', 'REMOVIDO'),
