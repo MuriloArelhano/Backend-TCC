@@ -1,12 +1,29 @@
 const User = require('../models/User');
 
-class UserController {
-  async approveUser(request, response) {
-    const { email } = request.body;
+class AccessController {
+  async manage(request, response) {
+    /**
+     * verificando se o usuário que está fazendo a requisição é um administrador
+     */
+    const admin = await User.findOne({
+      where: {
+        id: request.userID,
+        role: 'ADMIN',
+      },
+    });
 
+    if (!admin) {
+      return response.status(400).json({
+        error: 'Você não é um administrador',
+      });
+    }
+
+    /**
+     * verificando se o email passado é de usuário que existe
+     */
     const user = await User.findOne({
       where: {
-        email,
+        email: request.body.email,
       },
     });
 
@@ -16,48 +33,57 @@ class UserController {
       });
     }
 
+    /**
+     * verificando se o administrador está tentando alterar a própria conta
+     */
+    if (admin.id === user.id) {
+      return response.status(400).json({
+        error: 'Você não pode alterar o seu própria conta por aqui',
+      });
+    }
+
     try {
+      const status = AccessController.handleStatus(request.params.manage);
+
+      if (!status) {
+        return response.status(400).json({
+          error: 'Rota inválida',
+        });
+      }
+
       const result = await User.update(
-        { status: 'ATIVO' },
+        { status: status.value },
         { where: { id: user.id } },
       );
 
       if (result[0] !== 1) return response.json({ result });
 
-      return response.json({ message: 'Usuário ativo' });
+      return response.json({ message: status.message });
     } catch (err) {
       return response.status(400).json({ error: err.message });
     }
   }
 
-  async suspendUser(request, response) {
-    const { email } = request.body;
-
-    const user = await User.findOne({
-      where: {
-        email,
+  static handleStatus(param) {
+    const status = {
+      approve: {
+        value: 'ATIVO',
+        message: 'Usuário ativo',
       },
-    });
+      suspend: {
+        value: 'SUSPENSO',
+        message: 'Usuário suspenso',
+      },
+      removed: {
+        value: 'REMOVIDO',
+        message: 'Usuário removido',
+      },
+    };
 
-    if (!user) {
-      return response.status(400).json({
-        error: 'Usuário não existe',
-      });
-    }
+    if (!(param in status)) return null;
 
-    try {
-      const result = await User.update(
-        { status: 'SUSPENSO' },
-        { where: { id: user.id } },
-      );
-
-      if (result[0] !== 1) return response.json({ result });
-
-      return response.json({ message: 'Usuário suspenso' });
-    } catch (err) {
-      return response.status(400).json({ error: err.message });
-    }
+    return status[param];
   }
 }
 
-module.exports = new UserController();
+module.exports = new AccessController();
