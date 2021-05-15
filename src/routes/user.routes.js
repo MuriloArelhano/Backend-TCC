@@ -7,12 +7,9 @@ const authMiddleware = require('../app/middlewares/auth');
 
 const userRouter = Router();
 
-userRouter.get('/', (request, response) => {
-  return response.send('Rota de usuários');
-});
-
 userRouter.post('/', UserController.create);
 userRouter.post('/auth', UserController.auth);
+userRouter.get('/', UserController.listAll);
 // access
 userRouter.post('/:manage', authMiddleware, AccessController.manage);
 

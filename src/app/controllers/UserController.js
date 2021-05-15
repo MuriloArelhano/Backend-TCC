@@ -87,6 +87,49 @@ class UserController {
 
     return response.json({ user: formattedUser, token });
   }
+
+  async listAll(request, response) {
+    let users = [];
+
+    if (request.query.onlyAdmin) {
+      users = await User.findAll({
+        where: {
+          role: 'ADMIN',
+        },
+        order: [['created_at', 'ASC']],
+      });
+    } else if (request.query.onlyBase) {
+      users = await User.findAll({
+        where: {
+          role: 'BASE',
+        },
+        order: [['created_at', 'ASC']],
+      });
+    } else {
+      users = await User.findAll({
+        order: [['created_at', 'ASC']],
+      });
+    }
+
+    if (!users) {
+      return response.status(400).json({
+        error: 'Erro ao buscar usuários',
+      });
+    }
+
+    const formattedUsers = users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birth_date,
+      status: user.status,
+      role: user.role,
+      createdAt: user.created_at,
+      updatedAt: user.updated_at,
+    }));
+
+    return response.status(200).json(formattedUsers);
+  }
 }
 
 module.exports = new UserController();
