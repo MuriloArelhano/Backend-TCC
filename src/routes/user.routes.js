@@ -9,7 +9,7 @@ const userRouter = Router();
 
 userRouter.post('/', UserController.create);
 userRouter.post('/auth', UserController.auth);
-userRouter.get('/', UserController.listAll);
+userRouter.get('/', authMiddleware, UserController.listAll);
 // access
 userRouter.post('/:manage', authMiddleware, AccessController.manage);
 
