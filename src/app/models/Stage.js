@@ -5,7 +5,6 @@ class Stage extends Model {
   static init(sequelize) {
     super.init(
       {
-        initials: Sequelize.STRING,
         name: Sequelize.STRING,
         content: Sequelize.TEXT,
       },

@@ -1,7 +1,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('stages', {
-      initials: {
+      id: {
         type: Sequelize.STRING,
         allowNull: false,
         primaryKey: true,
@@ -12,7 +12,7 @@ module.exports = {
       },
       content: {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,
