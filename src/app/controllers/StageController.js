@@ -37,7 +37,10 @@ class StageController {
       });
     }
 
-    await Stage.update({ content: request.body.content }, { where: { id } });
+    await Stage.update(
+      { content: JSON.stringify(request.body.content) },
+      { where: { id } },
+    );
 
     return response
       .status(200)
