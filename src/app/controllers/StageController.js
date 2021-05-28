@@ -58,6 +58,26 @@ class StageController {
 
     return response.status(200).json(stages);
   }
+
+  async listFocusArea(request, response) {
+    const { id, focusArea } = request.params;
+
+    const stage = await Stage.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!stage) {
+      return response.status(400).json({
+        error: 'Erro ao buscar estágio',
+      });
+    }
+
+    const area = JSON.parse(stage.content)[focusArea];
+
+    return response.status(200).json(area);
+  }
 }
 
 module.exports = new StageController();
