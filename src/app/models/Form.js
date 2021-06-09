@@ -5,9 +5,8 @@ class Form extends Model {
   static init(sequelize) {
     super.init(
       {
-        stage: Sequelize.STRING,
         focus_area: Sequelize.STRING,
-        answers: Sequelize.JSON,
+        answers: Sequelize.ARRAY(Sequelize.JSON),
       },
       {
         sequelize,
@@ -20,7 +19,8 @@ class Form extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.User, { as: 'user_id' });
+    this.belongsTo(models.User, { as: 'user' });
+    this.belongsTo(models.Stage, { as: 'stage' });
   }
 }
 
