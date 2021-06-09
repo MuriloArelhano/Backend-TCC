@@ -8,6 +8,7 @@
     "dev": "nodemon src/server.js",
     "db:migrate": "npx sequelize db:migrate",
     "db:rollback": "npx sequelize db:migrate:undo",
+    "db:migration": "npx sequelize migration:create",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
