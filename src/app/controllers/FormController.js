@@ -79,6 +79,66 @@ class FormController {
       });
     }
   }
+
+  async listAll(request, response) {
+    const formAnswers = await Form.findAll();
+
+    if (!formAnswers) {
+      return response.status(400).json({
+        error: 'Erro ao buscar respostas do formulário',
+      });
+    }
+
+    const formattedFormAnswers = await Promise.all(
+      formAnswers.map(async (formAnswer) => {
+        const foundUser = await User.findOne({
+          where: {
+            id: formAnswer.userId,
+          },
+        });
+
+        delete formAnswer.dataValues.userId;
+        const { stageId } = formAnswer.dataValues;
+        delete formAnswer.dataValues.stageId;
+
+        return {
+          ...formAnswer.dataValues,
+          focus_area: FormController.getFocusAreaOfKey(
+            formAnswer.dataValues.focus_area,
+          ),
+          stageName: FormController.getStageOfKey(stageId),
+          userEmail: foundUser.dataValues.email,
+          answersAmount: formAnswer.dataValues.answers.length,
+        };
+      }),
+    );
+
+    return response.status(200).json(formattedFormAnswers);
+  }
+
+  static getFocusAreaOfKey(key) {
+    const focusAreas = {
+      plataforma_e_produtos: 'Plataforma e Produtos',
+      fluxo_de_avanco_do_desenvolvedor: 'Fluxo de Avanço do Desenvolvedor',
+      devrel_evangelismo_e_advocacia: 'Devrel (evangelismo e advocacia)',
+      monitoramento: 'Monitoramento',
+    };
+
+    return focusAreas[key] || key;
+  }
+
+  static getStageOfKey(key) {
+    const stages = {
+      A: 'Ativação',
+      EN: 'Entrada',
+      REC: 'Reconhecimento',
+      REF: 'Referência',
+      RET: 'Retenção',
+      SE: 'Sensibilização',
+    };
+
+    return stages[key] || key;
+  }
 }
 
 module.exports = new FormController();
