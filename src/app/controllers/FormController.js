@@ -81,7 +81,9 @@ class FormController {
   }
 
   async listAll(request, response) {
-    const formAnswers = await Form.findAll();
+    const formAnswers = await Form.findAll({
+      order: [['updated_at', 'ASC']],
+    });
 
     if (!formAnswers) {
       return response.status(400).json({
