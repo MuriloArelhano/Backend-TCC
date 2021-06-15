@@ -8,5 +8,6 @@ const formRouter = Router();
 
 formRouter.post('/', authMiddleware, FormController.create);
 formRouter.get('/', authMiddleware, FormController.listAll);
+formRouter.get('/answers', authMiddleware, FormController.getAnswersAmount);
 
 module.exports = formRouter;

@@ -141,6 +141,36 @@ class FormController {
 
     return stages[key] || key;
   }
+
+  async getAnswersAmount(request, response) {
+    try {
+      const { userId, stageId, focusArea } = request.query;
+
+      const form = await Form.findOne({
+        where: {
+          user_id: userId,
+          stage_id: stageId,
+          focus_area: focusArea,
+        },
+      });
+
+      if (!form) {
+        return response.status(200).json({
+          answersAmount: 0,
+        });
+      }
+
+      const answersAmount = form.dataValues.answers.length;
+
+      return response.status(200).json({
+        answersAmount,
+      });
+    } catch (err) {
+      return response.status(500).json({
+        error: err,
+      });
+    }
+  }
 }
 
 module.exports = new FormController();
