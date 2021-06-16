@@ -11,6 +11,7 @@ userRouter.post('/', UserController.create);
 userRouter.post('/auth', UserController.auth);
 userRouter.get('/', authMiddleware, UserController.listAll);
 userRouter.put('/:id', authMiddleware, UserController.update);
+userRouter.put('/:id/password', authMiddleware, UserController.changePassword);
 // access
 userRouter.post('/:manage', authMiddleware, AccessController.manage);
 

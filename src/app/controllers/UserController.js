@@ -1,4 +1,4 @@
-const { compare } = require('bcryptjs');
+const { compare, hash } = require('bcryptjs');
 const { sign } = require('jsonwebtoken');
 
 const User = require('../models/User');
@@ -177,6 +177,82 @@ class UserController {
           message: 'Informações atualizadas com sucesso',
         });
       }
+
+      return response.status(500).json({
+        message: 'Erro ao atualizar usuário',
+      });
+    } catch (err) {
+      return response.status(500).json({
+        error: err,
+      });
+    }
+  }
+
+  async changePassword(request, response) {
+    try {
+      const {
+        currentPassword,
+        newPassword,
+        newPasswordConfirmation,
+      } = request.body;
+      const { id } = request.params;
+
+      if (id !== request.userID) {
+        return response.status(401).json({
+          error: 'Não é possível alterar a senha de outro usuário',
+        });
+      }
+
+      const user = await User.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!user) {
+        return response.status(404).json({
+          error: 'Esse usuário não existe',
+        });
+      }
+
+      if (!currentPassword || !newPassword || !newPasswordConfirmation) {
+        return response.status(404).json({
+          error: 'Erro ao alterar senha. Informações insuficientes',
+        });
+      }
+
+      const passwordMatched = await compare(currentPassword, user.password);
+      if (!passwordMatched) {
+        return response.status(404).json({
+          error: 'Senha atual inválida',
+        });
+      }
+
+      if (String(newPassword).length < 6) {
+        return response.status(404).json({
+          error: 'A nova senha deve ter no mínimo 6 caracteres',
+        });
+      }
+
+      if (newPassword !== newPasswordConfirmation) {
+        return response.status(404).json({
+          error: 'A confirmação de senha não é igual a nova senha',
+        });
+      }
+
+      const newPasswordHash = await hash(newPassword, 8);
+
+      const result = await User.update(
+        { password: newPasswordHash },
+        { where: { id } },
+      );
+
+      if (result) {
+        return response.status(200).json({
+          message: 'Informações atualizadas com sucesso',
+        });
+      }
+
       return response.status(500).json({
         message: 'Erro ao atualizar usuário',
       });
