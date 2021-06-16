@@ -130,6 +130,62 @@ class UserController {
 
     return response.status(200).json(formattedUsers);
   }
+
+  async update(request, response) {
+    try {
+      const { name, email, birthDate } = request.body;
+      const { id } = request.params;
+
+      const userExists = await User.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!userExists) {
+        return response.status(404).json({
+          error: 'Esse usuário não existe',
+        });
+      }
+
+      const body = {};
+
+      if (email) {
+        const user = await User.findOne({
+          where: {
+            email,
+          },
+        });
+
+        if (user && user.dataValues.id !== id) {
+          return response.status(404).json({
+            error: 'O email informado pertence a outro usuário',
+          });
+        }
+
+        body.email = email;
+      }
+
+      if (name) body.name = name;
+
+      if (birthDate) body.birth_date = birthDate;
+
+      const result = await User.update(body, { where: { id } });
+
+      if (result) {
+        return response.status(200).json({
+          message: 'Informações atualizadas com sucesso',
+        });
+      }
+      return response.status(500).json({
+        message: 'Erro ao atualizar usuário',
+      });
+    } catch (err) {
+      return response.status(500).json({
+        error: err,
+      });
+    }
+  }
 }
 
 module.exports = new UserController();
