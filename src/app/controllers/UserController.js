@@ -157,8 +157,8 @@ class UserController {
           },
         });
 
-        if (user && user.dataValues.id !== id) {
-          return response.status(404).json({
+        if (user && Number(user.id) !== Number(id)) {
+          return response.status(401).json({
             error: 'O email informado pertence a outro usuário',
           });
         }
@@ -173,8 +173,22 @@ class UserController {
       const result = await User.update(body, { where: { id } });
 
       if (result) {
+        const user = await User.findOne({
+          where: {
+            id,
+          },
+        });
+
         return response.status(200).json({
           message: 'Informações atualizadas com sucesso',
+          user: {
+            birthDate: user.birth_date,
+            email: user.email,
+            id: user.id,
+            name: user.name,
+            role: user.role,
+            status: user.status,
+          },
         });
       }
 
