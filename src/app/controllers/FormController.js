@@ -43,7 +43,13 @@ class FormController {
 
       if (form) {
         const { answers } = form.dataValues;
-        const newAnswers = [...answers, request.body.answers];
+        const newAnswers = [
+          ...answers,
+          {
+            answers: request.body.answers,
+            createdAt: new Date().toLocaleString(),
+          },
+        ];
 
         await Form.update(
           { answers: newAnswers },
@@ -65,7 +71,12 @@ class FormController {
         userId,
         stageId,
         focus_area: focusArea,
-        answers: [request.body.answers],
+        answers: [
+          {
+            answers: request.body.answers,
+            createdAt: new Date().toLocaleString(),
+          },
+        ],
       };
 
       await Form.create(body);
@@ -74,6 +85,7 @@ class FormController {
         message: 'Formulário adicionado com sucesso',
       });
     } catch (err) {
+      console.log(err);
       return response.status(500).json({
         error: err,
       });
