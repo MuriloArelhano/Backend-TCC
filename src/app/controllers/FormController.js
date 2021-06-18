@@ -85,7 +85,6 @@ class FormController {
         message: 'Formulário adicionado com sucesso',
       });
     } catch (err) {
-      console.log(err);
       return response.status(500).json({
         error: err,
       });
