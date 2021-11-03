@@ -56,12 +56,6 @@ class UserController {
       });
     }
 
-    if (user.status === 'PENDENTE') {
-      return response.status(400).json({
-        error: 'Seu perfil ainda não foi liberado',
-      });
-    }
-
     if (user.status === 'REMOVIDO' || user.status === 'SUSPENSO') {
       return response.status(400).json({
         error:
